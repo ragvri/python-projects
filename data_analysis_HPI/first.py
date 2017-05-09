@@ -1,7 +1,6 @@
 import quandl
 import pandas as pd
 import pickle
-
 # pickle saves any python object eg variable,lists etc
 
 api_key = 'vhkrsKz3TmUN6Qa4QjZK'
@@ -41,9 +40,9 @@ def grab_initial_state_data():
 
 # grab_initial_state_data()
 # once our data has been pickled we don't need to get the data again. So the function is commented
-pickle_in=open('states.pickle','rb')
+pickle_in=open('states.pickle', 'rb')
 HPI_data=pickle.load(pickle_in)
-print(HPI_data)
 # we can also use pandas own pickle method
 # HPI_data.to_pickle('a.pickle')
 # HPI_2=pd.read_pickle('a.pickle')
+
