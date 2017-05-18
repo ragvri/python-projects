@@ -1,4 +1,6 @@
+redirect_url = "http://localhost:8080"
+client_id = 'h6sI1vzQNcv4eA'
+client_secret = "-3jMkU_3jhWyzatzcwl_5RM5JpA"
+user_agent = "wallpaper by /u/rjmessibarca"
 username = 'rjmessibarca'
-password = 'patiencefcb1997'
-client_id = 'vOEeDF1aupRkMA'
-client_secret = "may7syioqkmpzNV2Wl3tug_wOVo"
+password = 'kx!c8%qTQ@57'
