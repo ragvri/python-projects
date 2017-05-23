@@ -3,6 +3,11 @@ import config
 import urllib.request
 import os
 import ctypes
+import random
+import sys
+
+wallp = {'1': 'AnimeWallpaper', '2': 'ImaginaryLandscapes', '3': 'itookapicture', '4': 'EarthPorn'}
+secure_random = random.SystemRandom()
 
 
 # we need an instance of Reddit class to do anything with praw
@@ -19,26 +24,28 @@ def logging_in():
     return r
 
 
-def get_submissions_url(r):
-    subreddit = r.subreddit('EarthPorn')
+def get_submissions_url(r, sub):
+    endings = ['jpg', 'png', 'bmp']
+    subreddit = r.subreddit(sub)
 
     list_url = []
-    for submissions in subreddit.top(time_filter='day', limit=100):  # gets a list of top 100 url of a day from
+    for submissions in subreddit.top(time_filter='month', limit=100):  # gets a list of top 100 url of a day from
         # /r/Earthporn
-        list_url.append(submissions.url)
+        if submissions.over_18:
+            continue
+        url = submissions.url
+        ending = url[-3:]
+        if ending in endings:
+            list_url.append(url)
     return list_url
 
 
-def downloading_image(list):  # we find the first image among the 100 urls which ends with jpg and download that image
-    for url in list:
-        ending = url[-3:]
-        print(ending)
-        if ending == 'jpg':
-            break
-
-    print(url)
+def downloading_image(l):  # we find the first image among the 100 urls which ends with jpg and download that image
+    url_to_download = secure_random.choice(l)
+    formatt = url_to_download[-3:]
+    # print(url_to_download)
     try:
-        req = urllib.request.Request(url=url, headers={'User-Agent': 'Mozilla'})
+        req = urllib.request.Request(url=url_to_download, headers={'User-Agent': 'Mozilla'})
         resp = urllib.request.urlopen(req)
     except Exception as e:
         print(e)
@@ -50,15 +57,18 @@ def downloading_image(list):  # we find the first image among the 100 urls which
             if not chunk:
                 break
             f.write(chunk)
+    return formatt
 
 
-def make_wallpaper():  # set the downloaded image as background
+def make_wallpaper(formatt):  # set the downloaded image as background
 
     location = os.getcwd()
     if os.name == 'nt':  # if using windows
+        print('Windows')
         SPI_SETDESKWALLPAPER = 20
-        path = location + "\1.jpg"
-        ctypes.windll.user32.SystemParametersInfoA(SPI_SETDESKWALLPAPER, 0, path, 0)
+        path = location + "\\1." + formatt
+        print(path)
+        ctypes.windll.user32.SystemParametersInfoW(SPI_SETDESKWALLPAPER, 0, path, 0)
 
     else:  # if using linux
         path = "file://" + location + "/1.jpg"
@@ -68,15 +78,19 @@ def make_wallpaper():  # set the downloaded image as background
 
 
 def main():
+    if len(sys.argv) == 1:
+        inp = secure_random.choice(list(wallp.values()))
+    else:
+        inp = wallp[sys.argv[1]]
+    print(inp)
     r = logging_in()
     # pprint(vars(r))
     # print(r.user)
-    l = get_submissions_url(r)
-    for i in l:
-        print(i)
+    l = get_submissions_url(r, inp)
 
-    downloading_image(l)
-    make_wallpaper()
+    formatt = downloading_image(l)
+    # print(formatt)
+    make_wallpaper(formatt)
 
 
 if __name__ == '__main__':
