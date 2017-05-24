@@ -6,7 +6,8 @@ import ctypes
 import random
 import sys
 
-wallp = {'1': 'AnimeWallpaper', '2': 'ImaginaryLandscapes', '3': 'itookapicture', '4': 'EarthPorn'}
+wallp = {'1': 'AnimeWallpaper', '2': 'ImaginaryLandscapes', '3': 'itookapicture', '4': 'EarthPorn', '5': 'wallpaper',
+         '6': "wallpapers"}
 secure_random = random.SystemRandom()
 
 
@@ -19,7 +20,6 @@ def logging_in():
         client_secret=config.client_secret,
         user_agent=config.user_agent)
 
-    # print(r.auth.url(['identity'], '...', 'permanent'))
     print("logged in!")
     return r
 
@@ -29,9 +29,9 @@ def get_submissions_url(r, sub):
     subreddit = r.subreddit(sub)
 
     list_url = []
-    for submissions in subreddit.top(time_filter='month', limit=100):  # gets a list of top 100 url of a day from
-        # /r/Earthporn
-        if submissions.over_18:
+    for submissions in subreddit.top(time_filter='month',
+                                     limit=100):  # gets a list of top 100 url of a day from the subreddit
+        if submissions.over_18:  # not nsfw
             continue
         url = submissions.url
         ending = url[-3:]
@@ -43,7 +43,6 @@ def get_submissions_url(r, sub):
 def downloading_image(l):  # we find the first image among the 100 urls which ends with jpg and download that image
     url_to_download = secure_random.choice(l)
     formatt = url_to_download[-3:]
-    # print(url_to_download)
     try:
         req = urllib.request.Request(url=url_to_download, headers={'User-Agent': 'Mozilla'})
         resp = urllib.request.urlopen(req)
@@ -84,12 +83,9 @@ def main():
         inp = wallp[sys.argv[1]]
     print(inp)
     r = logging_in()
-    # pprint(vars(r))
-    # print(r.user)
     l = get_submissions_url(r, inp)
 
     formatt = downloading_image(l)
-    # print(formatt)
     make_wallpaper(formatt)
 
 
