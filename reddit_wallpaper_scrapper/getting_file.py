@@ -49,7 +49,7 @@ def downloading_image(l):  # we find the first image among the 100 urls which en
     except Exception as e:
         print(e)
 
-    CHUNK = 16 * 1024
+    CHUNK = 1024
     with open('1.jpg', 'wb') as f:
         while True:
             chunk = resp.read(CHUNK)
