@@ -18,7 +18,7 @@ This script sets your desktop wallpaper using images available on reddit
 
 Go to the wallpaper_setter folder.
 
-** Download all the required packages**
+**Download all the required packages**
 
 `pip3 install -r /path/to/requirements.txt` 
 
@@ -29,6 +29,7 @@ or open terminal in the directory where you just cloned and
 Now to run the script, just use:
 
 `python3 /path/to/set_wallpaper.py`
+
     
 
 
