@@ -26,7 +26,7 @@ or open terminal in the directory where you just cloned and
 
 `pip3 install -r requirements.txt`
 
-Now to run the script, just use:
+**Now to run the script, just use:**
 
 `python3 /path/to/set_wallpaper.py`
 
