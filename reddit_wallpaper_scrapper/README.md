@@ -3,21 +3,24 @@
 This script sets your desktop wallpaper using images available on reddit
 
 ## Requirements
-* praw
-* ctypes
-* you would also need to [setup your own reddit app](https://praw.readthedocs.io/en/latest/getting_started/authentication.html#oauth)
+* you would need to [get an authentication token](https://praw.readthedocs.io/en/latest/getting_started/authentication.html#oauth)
 
-**Once you setup the redit app**
+**Once you get the authentication token**
 
-Create a file by the name of `config.py`. Inside the file paste your reddit username , reddit password , client id, client secret, user_agent by the names `username`, `password`,
-`client_id`, `client_secret`, `user_agent` 
-respectively.
+1) Open `config.template` and enter the data inside it
+2) Rename `config.template` to `config.py`
 
-**This file needs to be in the same folder**
+
 
 ## To run the script
 
-    python3 getting_file.py
+** Before running the script download all the required packages
+
+ `pip3 install pip install -r /path/to/requirements.txt`
+
+Now to run the script, just use:
+
+`python3 set_wallpaper.py`
     
 
 

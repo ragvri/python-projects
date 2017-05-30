@@ -1,0 +1,6 @@
+redirect_url = "http://localhost:8080"
+client_id = 'YOUR_ID_AFTER_MAKING_APP'
+client_secret = "YOUR_CLIENT'S_SECRET"
+user_agent = "DESCRIPTION OF APP"
+username = 'USERNAME_WITH_WHICH_APP_CREATED'
+password = 'PASSWORD_FOR_THE_USERNAME'
