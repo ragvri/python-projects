@@ -1,4 +1,2 @@
 praw
-urllib.request
-os
-ctypes
+
