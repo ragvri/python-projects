@@ -4,12 +4,18 @@ import urllib.request
 import os
 import ctypes
 import random
-import sys
 import subprocess
+import argparse
+from argparse import RawTextHelpFormatter
 
-subreddits = {'1': 'AnimeWallpaper', '2': 'ImaginaryLandscapes', '3': 'itookapicture', '4': 'EarthPorn',
-              '5': 'wallpaper',
-              '6': "wallpapers"}
+subreddits = {1: ['AnimeWallpaper', 'Anime'],
+              2: ['ImaginaryLandscapes', 'Art'],
+              3: ['itookapicture', 'pics'],
+              4: ['EarthPorn', 'Earth pics'],
+              5: ['wallpaper', 'wallapers'],
+              6: ["wallpapers", 'wallpapers'],
+              7: ['hdsoccer', 'soccer']}
+
 secure_random = random.SystemRandom()
 
 
@@ -23,17 +29,19 @@ def log_in():
             client_secret=config.client_secret,
             user_agent=config.user_agent)
     except Exception as e:
-        print("Unable to connect\n"+e)
+        print("Unable to connect\n" + str(e))
+        quit()
     return reddit
 
 
-def get_submissions_url(r, sub):
+def get_submissions_url(r, sub, time_filter='month'):
     print("getting link")
+    print(time_filter)
     allowed_extensions = ['jpg', 'png', 'bmp']
     subreddit = r.subreddit(sub)
 
     list_url = []
-    for submissions in subreddit.top(time_filter='month',
+    for submissions in subreddit.top(time_filter=time_filter,
                                      limit=100):  # gets a list of top 100 url of a day from the subreddit
         if submissions.over_18:  # not nsfw
             continue
@@ -53,6 +61,7 @@ def download_image(l):  # we find the first image among the 100 urls which ends 
         resp = urllib.request.urlopen(req)
     except Exception as e:
         print(e)
+        quit()
 
     CHUNK = 1024
     with open('1.jpg', 'wb') as f:
@@ -78,13 +87,30 @@ def set_wallpaper(file_extension):  # set the downloaded image as background
     print('done')
 
 
+def parse_input():
+    help_for_type = ''
+    for key, value in subreddits.items():
+        text = str(key) + ' for ' + value[1]
+        help_for_type += text
+        help_for_type += '\n'
+    help_for_time = "'hour' to get top posts of last hour \n'day' to get top posts of today\n'month' to get top posts " \
+                    "of past month\n'year' to get top posts of last year\n'all' to get all time top posts\n"
+    parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
+    parser.add_argument('--time', type=str, default='month', help=help_for_time)
+    parser.add_argument('--type', type=int, default=None, help=help_for_type)
+    args = parser.parse_args()
+    return args
+
+
 def main():
-    if len(sys.argv) == 1:
-        inp = secure_random.choice(list(subreddits.values()))
+    args = parse_input()
+    if args.type is None:
+        subreddit = secure_random.choice(list(subreddits.values()))[0]
     else:
-        inp = subreddits[sys.argv[1]]
+        subreddit = subreddits[args.type][0]
     reddit = log_in()
-    links = get_submissions_url(reddit, inp)
+    print(subreddit)
+    links = get_submissions_url(reddit, subreddit, time_filter=args.time)
 
     file_extension = download_image(links)
     set_wallpaper(file_extension)
