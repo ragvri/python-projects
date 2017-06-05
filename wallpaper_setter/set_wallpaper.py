@@ -13,9 +13,11 @@ subreddits = {1: ['AnimeWallpaper', 'Anime'],
               3: ['itookapicture', 'pics'],
               4: ['EarthPorn', 'Earth pics'],
               5: ['wallpaper', 'wallapers'],
-              6: ["wallpapers", 'wallpapers'],
-              7: ['hdsoccer', 'soccer']}
-
+              6: ['animals', 'animalporn'],
+              7: ["wallpapers", 'wallpapers'],
+              8: ['hdsoccer', 'soccer'], }
+# foxes, ImaginaryBattlefields, ImaginaryCityscapes, ImaginaryMindscapes, ImaginaryStarscapes, ImaginaryWastelands,
+# SpecArt, CityPorn
 secure_random = random.SystemRandom()
 
 
@@ -55,7 +57,7 @@ def get_submissions_url(r, sub, time_filter='month'):
 def download_image(l):  # we find the first image among the 100 urls which ends with jpg and download that image
     print("downloading image")
     url_to_download = secure_random.choice(l)
-    file_extension = os.path.splitext(url_to_download)[1]
+    file_extension = os.path.splitext(url_to_download)[-1][:4]
     try:
         req = urllib.request.Request(url=url_to_download, headers={'User-Agent': 'Mozilla'})
         resp = urllib.request.urlopen(req)
@@ -64,7 +66,7 @@ def download_image(l):  # we find the first image among the 100 urls which ends 
         quit()
 
     CHUNK = 1024
-    with open('1.jpg', 'wb') as f:
+    with open('1' + file_extension, 'wb') as f:
         while True:
             chunk = resp.read(CHUNK)
             if not chunk:
