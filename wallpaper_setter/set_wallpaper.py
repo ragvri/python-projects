@@ -9,15 +9,15 @@ import argparse
 from argparse import RawTextHelpFormatter
 
 subreddits = {1: ['AnimeWallpaper', 'Anime'],
-              2: ['ImaginaryLandscapes', 'Art'],
+              2: ['ImaginaryLandscapes', 'Art', 'ImaginaryBattlefields', 'ImaginaryCityscapes', 'ImaginaryMindscapes',
+                  'ImaginaryStarscapes', 'ImaginaryWastelands', 'SpecArt', 'CityPorn'],
               3: ['itookapicture', 'pics'],
               4: ['EarthPorn', 'Earth pics'],
               5: ['wallpaper', 'wallapers'],
-              6: ['animals', 'animalporn'],
+              6: ['animals', 'animalporn', 'foxes'],
               7: ["wallpapers", 'wallpapers'],
               8: ['hdsoccer', 'soccer'], }
-# foxes, ImaginaryBattlefields, ImaginaryCityscapes, ImaginaryMindscapes, ImaginaryStarscapes, ImaginaryWastelands,
-# SpecArt, CityPorn
+
 secure_random = random.SystemRandom()
 
 
@@ -36,7 +36,7 @@ def log_in():
     return reddit
 
 
-def get_submissions_url(r, sub, time_filter='month'):
+def get_submissions_url(r, sub, time_filter='month', isnsfw=False):
     print("getting link")
     print(time_filter)
     allowed_extensions = ['jpg', 'png', 'bmp']
@@ -45,7 +45,7 @@ def get_submissions_url(r, sub, time_filter='month'):
     list_url = []
     for submissions in subreddit.top(time_filter=time_filter,
                                      limit=100):  # gets a list of top 100 url of a day from the subreddit
-        if submissions.over_18:  # not nsfw
+        if not isnsfw and submissions.over_18:  # not nsfw
             continue
         url = submissions.url
         extension = url[-3:]
@@ -100,19 +100,25 @@ def parse_input():
     parser = argparse.ArgumentParser(formatter_class=RawTextHelpFormatter)
     parser.add_argument('--time', type=str, default='month', help=help_for_time)
     parser.add_argument('--type', type=int, default=None, help=help_for_type)
+    parser.add_argument('--nsfw', type=str, default=False, help="type True to get nsfw wallpapers")
+    parser.add_argument('--subreddit', default=None, type=str, help="Type subreddit name to download wallpaper from")
     args = parser.parse_args()
     return args
 
 
 def main():
     args = parse_input()
-    if args.type is None:
-        subreddit = secure_random.choice(list(subreddits.values()))[0]
+    if args.subreddit is not None:
+        subreddit = args.subreddit
+    elif args.type is None:
+        subreddit_list = secure_random.choice(list(subreddits.values()))
+        subreddit = subreddit_list[random.randint(0, len(subreddit_list)) - 1]
     else:
-        subreddit = subreddits[args.type][0]
+        subreddit_list = subreddits[args.type]
+        subreddit = subreddit_list[random.randint(0, len(subreddit_list) - 1)]
     reddit = log_in()
     print(subreddit)
-    links = get_submissions_url(reddit, subreddit, time_filter=args.time)
+    links = get_submissions_url(reddit, subreddit, time_filter=args.time, isnsfw=args.nsfw)
 
     file_extension = download_image(links)
     set_wallpaper(file_extension)
